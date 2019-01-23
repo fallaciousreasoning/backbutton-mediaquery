@@ -10,19 +10,19 @@ Note: This explainer is based on [mgiuca's](https://github.com/mgiuca) proposal 
 
 The **back button media query** is a proposed API (as defined by the [Web App Manifest Standard](https://www.w3.org/TR/appmanifest/)) to determine whether a back button is currently being shown.
 
-This API is being proposed as a way to eliminate the "double back button" problem (seen [here](images/double-back-button.jpg), on Twitters PWA in the Microsoft store). This problem arises because developers of ["standalone" and "minimal-ui"](https://www.w3.org/TR/appmanifest/#display-modes), apps have no way of determining whether a back button will be provided by the user agent (in the browser, OS or hardware), and so, are forced to implement their own, to ensure users are still able to use the app.
+This API is being proposed as a way to eliminate the "double back button" problem (seen [here](images/double-back-button.jpg), on Twitters PWA in the Microsoft store). This problem arises because developers of ["standalone" and "minimal-ui"](https://www.w3.org/TR/appmanifest/#display-modes), apps have no way of determining whether a back button will be provided by the user agent (the browser, OS or hardware), and so, are forced to implement their own, to ensure that their app is functional without the browser's UI.
 
 This will allow apps to avoid the "double back button" problem by letting them conditionally display a back button depending on whether the user agent is already displaying one. Adding a standard way to detect this means that we can avoid user-agent and viewport-size workarounds, which are not ideal for Web Compatibility.
 
 Possible Areas of Expansion
-- Detection of other controls, such as a forward button or tab strip
+- Detection of other controls, such as a forward button, tab strip or share button.
 
 Examples of sites that may use the API
 - Twitter (currently they are using user-agent detection to determine whether to show a back button).
 - Any app that performs navigations.
 
 Advantages over user-agent detection
-- If the user agent changes whether a display-mode displays a back button the site will not have to be updated.
+- If the user agent changes whether a `display-mode` has a back button the site will not have to be updated.
 - Sites don't have to understand how different user-agents will render them on different devices in different display-modes. For example, PWAs on Edge display a back button if there are pages in history while PWAs in Chrome never show a back button and PWAs on Android always have a back button available.
 
 ## API Proposal
@@ -37,7 +37,7 @@ The `navigation-controls` query should always be available, including when the a
 
 ### CSS
 
-It is expected that for the majority of use cases, simple CSS detection should be sufficient. This has the added advantage that it will work even if JavaScript is not enabled on the page (though it is unlikely that much else in a modern web application will).
+It is expected that for the majority of use cases, CSS detection should be sufficient. This has the added advantage that it will work even if JavaScript is not enabled on the page (though it is unlikely that much else in a modern web application will).
 
 ```css
 @media navigation-controls {
@@ -48,7 +48,7 @@ It is expected that for the majority of use cases, simple CSS detection should b
 ```
 
 ### JavaScript
-In more complicated scenarios, it might be more useful to detect the presence of the back button in JavaScript. Fortunately there is already a mechanism for running media queries in JavaScript.
+In more complicated scenarios, it might be useful to detect the presence of the back button in JavaScript. Fortunately there is already a mechanism for running media queries in JavaScript.
 
 ```js
 const backButtonQuery = window.matchMedia('navigation-controls');
@@ -62,20 +62,20 @@ backButtonQuery.addEventListener(query => {
 });
 ```
 
-*Note: It is not enough to simply check for the presence of a back button once, you must add the event listener to the media query, as it is  possible for the back button to be dynamically added and removed by the user agent. For example, in Chrome, an app can be moved into a tab and out again into an app window.*
+*Note: It is not enough to simply check for the presence of a back button once, you must add the event listener to the media query, as it is  possible for the back button to be dynamically added and removed by the user agent. For example, in Chrome, an app can be moved into a tab and out again into an app window, and in Edge, the back button is hidden when the back stack is empty.*
 
 ## Specific Operating System Treatment
 
 In general, operating systems go one of two ways:
 
 1. The system is expected to provide a back button, when required (e.g. Window 10, where a back button is added to PWAs when there is history).
-2. There is no 'system' back button, applications are always responsible for adding their own back button (e.g. iOS)
+2. There is no 'system' back button, applications are always responsible for adding their own back button (e.g. iOS).
 
 ### Not Android
 On non-Android platforms, there is no hardware/os level button, so the decision to show or hide a back button can be made on a per user-agent per platform level and reported via the query. Below are some recommendations.
 
-- Windows 10: Display a user-agent back button when history is available. This is consistent with existing applications from the Microsoft store. *Note: There may be a quirk here if the value of `navigation-controls` changes one Windows 10 when there is no history.* ![Windows 10 Twitter PWA](images/win-10-twitter-navigation-buttons.jpg)
-- Mac OS: Unclear what the OS conventions are but iTunes displays its buttons outside of the title bar. ![iTunes navigation buttons](images/osx-itunes-navigation-buttons.png) while the App Store always displays its buttons but inside the title bar. ![AppStore navigation buttons](images/osx-appstore-navigation-buttons.png)
+- Windows 10: Display a user-agent back button when history is available. This is consistent with existing applications from the Microsoft store. *Note: There may be a quirk here if the value of `navigation-controls` changes on Windows 10 when there is no history.* ![Windows 10 Twitter PWA](images/win-10-twitter-navigation-buttons.jpg)
+- Mac OS: Unclear what the OS conventions are. iTunes displays its buttons outside of the title bar ![iTunes navigation buttons](images/osx-itunes-navigation-buttons.png) while the App Store always displays its buttons but inside the title bar. ![AppStore navigation buttons](images/osx-appstore-navigation-buttons.png)
 - iOS: Don't display a user-agent back button. iOS applications are generally responsible for drawing their own navigation buttons. ![iOS iMessage navigation button](images/ios-imessage-navigation-buttons.jpg)
 - Linux: Unclear what conventions are.
 - ChromeOS: Unclear what conventions are.
@@ -85,14 +85,14 @@ Android is unique in that it provides an OS level back button but also recommend
 
 It is believed that Twitter is leaning into this, to make their application seem more native.
 
-Normally, we would hesitate to recommend user-agent detection, however, in this situation it does seem appropriate as the intended behavior is "Display a back button if the system doesn't provide one *OR* if the operating system is Android." As developers are explicitly thinking about Android, it's not unreasonable to mention it in code.
+Normally, we would hesitate to recommend user-agent detection, however, in this situation it does seem appropriate, as the intended behavior is "Display a back button if the system doesn't provide one *OR* if the operating system is Android." As developers are explicitly thinking about Android, it's not unreasonable to explicitly mention it in code.
 
-An alternative would be to have user-agents always return `navigation-controls: none` on Android, under the assumption that apps will always wish to show controls on Android. However, this might be overly broad.
+An alternative would be to suggest user-agents always return `navigation-controls: none` on Android, under the assumption that apps will always wish to show controls on Android. However, this might be overly broad.
 
 ## Questions and Concerns
 
 ### Why isn't this a JavaScript API?
-There are a number of reasons this isn't a JavaScript API.
+- Doesn't require JavaScript to be enabled to work.
 - We don't want to prescribe how developers do things; as a media query you can access this API from CSS or JavaScript.
 - An API of the form
     ```js
