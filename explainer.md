@@ -66,16 +66,27 @@ backButtonQuery.addEventListener(query => {
 
 ## Specific Operating System Treatment
 
-### The Android Quirk
+In general, operating systems go one of two ways:
 
-## Other Solutions
+1. The system is expected to provide a back button, when required (e.g. Window 10, where a back button is added to PWAs when there is history).
+2. There is no 'system' back button, applications are always responsible for adding their own back button (e.g. iOS)
 
-### Javascript API
+### Not Android
+On non-Android platforms, there is no hardware/os level button, so the decision to show or hide a back button can be made on a per user-agent per platform level and reported via the query. Below are some recommendations.
 
-### Requesting a Back Button
+- Windows 10: Display a user-agent back button when history is available. This is consistent with existing applications from the Microsoft store. *Note: There may be a quirk here if the value of `navigation-controls` changes one Windows 10 when there is no history.* ![Windows 10 Twitter PWA](images/win-10-twitter-navigation-buttons.jpg)
+- Mac OS: Unclear what the OS conventions are but iTunes displays its buttons outside of the title bar. ![iTunes navigation buttons](images/osx-itunes-navigation-buttons.png) while the App Store always displays its buttons but inside the title bar. ![AppStore navigation buttons](images/osx-appstore-navigation-buttons.png)
+- iOS: Don't display a user-agent back button. iOS applications are generally responsible for drawing their own navigation buttons. ![iOS iMessage navigation button](images/ios-imessage-navigation-buttons.jpg)
+- Linux: Unclear what conventions are.
+- ChromeOS: Unclear what conventions are.
+
+### Android
+Most platforms provide either a system back button (e.g. Windows 10), or expect applications to provide their own (e.g. iOS). Android is somewhat unique in that it provides a system back button but still expects applications to display their own. In the Android case 
 
 ## Questions and Concerns
 
 ### Why isn't this a JavaScript API?
 
 ### Why can't I just say in my manifest whether I want a back button?
+
+### Can I tell what kind of button is being displayed (i.e. hardware or software)?
