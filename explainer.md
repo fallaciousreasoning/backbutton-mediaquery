@@ -31,7 +31,9 @@ A CSS Media query `navigation-controls` which determines what navigation control
 
 *Note: This value is an enum not a boolean because `<mq-boolean>` is intended for [legacy purposes only](https://www.w3.org/TR/mediaqueries-4/#grid), with the spec noting that "If this feature were being designed today, it would instead use proper named keywords for its values."*
 
-The `navigation-controls` query should always be available, including when the app is not in a standalone window (i.e. in a normal browser window). In such a scenario, it should have an appropriate value, presumably `'back'`. This has the added advantage that querying `navigation-controls` should be a necessary and sufficient condition for displaying the back button, there would be no need to also query `display-mode`.
+There is precedence for doing feature detection via a CSS media query in the web app manifest's [display mode](https://www.w3.org/TR/appmanifest/#the-display-mode-media-feature), which allows developers to determine how their app is being displayed.
+
+The `navigation-controls` query should always be available, including when the app is not in a standalone window (i.e. it is in a normal browser window). In such a scenario, it should have an appropriate value, presumably `'back'`. This has the added advantage that querying `navigation-controls` should be a necessary and sufficient condition for displaying the back button, there would be no need to also query `display-mode`.
 
 ### CSS
 
