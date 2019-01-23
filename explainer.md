@@ -81,7 +81,13 @@ On non-Android platforms, there is no hardware/os level button, so the decision 
 - ChromeOS: Unclear what conventions are.
 
 ### Android
-Most platforms provide either a system back button (e.g. Windows 10), or expect applications to provide their own (e.g. iOS). Android is somewhat unique in that it provides a system back button but still expects applications to display their own. In the Android case 
+Android is unique in that it provides an OS level back button but also recommends that applications show their own back button. ![Android Play Store](images/android-playstore-navigation-buttons.jpg)
+
+It is believed that Twitter is leaning into this, to make their application seem more native.
+
+Normally, we would hesitate to recommend user-agent detection, however, in this situation it does seem appropriate as the intended behavior is "Display a back button if the system doesn't provide one *OR* if the operating system is Android." As developers are explicitly thinking about Android, it's not unreasonable to mention it in code.
+
+An alternative would be to have user-agents always return `navigation-controls: none` on Android, under the assumption that apps will always wish to show controls on Android. However, this might be overly broad.
 
 ## Questions and Concerns
 
