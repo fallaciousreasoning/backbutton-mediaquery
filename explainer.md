@@ -92,7 +92,20 @@ An alternative would be to have user-agents always return `navigation-controls: 
 ## Questions and Concerns
 
 ### Why isn't this a JavaScript API?
+There are a number of reasons this isn't a JavaScript API.
+- We don't want to prescribe how developers do things; as a media query you can access this API from CSS or JavaScript.
+- An API of the form
+    ```js
+    if (navigator.features.backButton) {
+        // stuff
+    }
+    ```
+   isn't sufficient, as we need some way of subscribing to change events, as the user agent may show/hide the back button (for example, changing between tablet and desktop mode in Window 10/Chrome OS or undocking/docking an app window). We get this for free with media queries.
 
 ### Why can't I just say in my manifest whether I want a back button?
 
-### Can I tell what kind of button is being displayed (i.e. hardware or software)?
+We're considering this, but specs generally prefer not to tell browsers how their UI should look. This way, you can respond to what the browser has done in an appropriate way.
+
+### Can I tell what kind of button is being displayed (i.e. hardware or software; from the user-agent or from the OS)?
+
+This question came up on a github [issue](https://github.com/w3c/manifest/issues/693#issuecomment-402608547). Because Android has different semantics associated with a back button press to other operating systems (e.g. close a modal when the back button is pressed, instead of going back a page), it would be useful to know the type of back button that is being provided. However, this issue seems to be more about "Is this Android" than "Is there an OS back button", so again, user agent detection seems like a more appropriate solution.
