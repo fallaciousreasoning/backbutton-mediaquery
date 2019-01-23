@@ -23,7 +23,10 @@ Examples of sites that may use the API
 
 Advantages over user-agent detection
 - If the user agent changes whether a `display-mode` has a back button the site will not have to be updated.
-- Sites don't have to understand how different user-agents will render them on different devices in different display-modes. For example, PWAs on Edge display a back button if there are pages in history while PWAs in Chrome never show a back button and PWAs on Android always have a back button available.
+- Sites don't have to understand how different user-agents will render them on different devices in different display-modes. For example:
+    - PWAs on Edge display a back button if there are pages in history.
+    - PWAs on Chrome Desktop never show a back button.
+    - PWAs on Android always have a back button available.
 
 ## API Proposal
 
@@ -33,7 +36,7 @@ A CSS Media query `navigation-controls` which determines what navigation control
 
 There is precedence for doing feature detection via a CSS media query in the web app manifest's [display mode](https://www.w3.org/TR/appmanifest/#the-display-mode-media-feature), which allows developers to determine how their app is being displayed.
 
-The `navigation-controls` query should always be available, including when the app is not in a standalone window (i.e. it is in a normal browser window). In such a scenario, it should have an appropriate value, likely `'back'`. This has the added advantage that querying `navigation-controls` should be a necessary and sufficient condition for displaying the back button, there would be no need to also query `display-mode`.
+The `navigation-controls` query should always be available, including when the app is not in a standalone window (i.e. it is in a normal browser window). In such a scenario, it should have an appropriate value, likely `'back'`. This has the added advantage that `navigation-controls` can be consulted independently of `display-mode`.
 
 ### CSS
 
@@ -62,21 +65,21 @@ backButtonQuery.addEventListener(query => {
 });
 ```
 
-*Note: It is not enough to simply check for the presence of a back button once, you must add the event listener to the media query, as it is  possible for the back button to be dynamically added and removed by the user agent. For example, in Chrome, an app can be moved into a tab and out again into an app window, and in Edge, the back button is hidden when the back stack is empty.*
+*Note: It is not enough to simply check for the presence of a back button once, you must add the event listener to the media query, as it is  possible for the back button to be dynamically added and removed by the user agent. For example, in Chrome Desktop, an app can be moved into a tab and out again into an app window, and in Edge, the back button is hidden when there is no history.*
 
 ## Specific Operating System Treatment
 
 In general, operating systems go one of two ways:
 
-1. The system is expected to provide a back button, when required (e.g. Window 10, where a back button is added to PWAs when there is history).
-2. There is no 'system' back button, applications are always responsible for adding their own back button (e.g. iOS).
+1. The system is expected to provide a back button, but may suppress it if unnecessary (e.g. Window 10, where a back button is added to PWAs if there is history).
+2. There is no 'system' back button, so applications are always responsible for adding their own back button (e.g. iOS).
 
 ### Not Android
-On non-Android platforms, there is no hardware/os level button, so the decision to show or hide a back button can be made on a per user-agent per platform level and reported via the query. Below are some recommendations.
+On non-Android platforms, there is no hardware/OS level button, so the decision to show or hide a back button can be made on a per user-agent per platform level and reported via the query. Below are some recommendations.
 
 - Windows 10: Display a user-agent back button when history is available. This is consistent with existing applications from the Microsoft store. *Note: There may be a quirk here if the value of `navigation-controls` changes on Windows 10 when there is no history.* ![Windows 10 Twitter PWA](images/win-10-twitter-navigation-buttons.jpg)
-- Mac OS: Unclear what the OS conventions are. iTunes displays its buttons outside of the title bar ![iTunes navigation buttons](images/osx-itunes-navigation-buttons.png) while the App Store always displays its buttons but inside the title bar. ![AppStore navigation buttons](images/osx-appstore-navigation-buttons.png)
-- iOS: Don't display a user-agent back button. iOS applications are generally responsible for drawing their own navigation buttons. ![iOS iMessage navigation button](images/ios-imessage-navigation-buttons.jpg)
+- Mac OS: Unclear what the OS conventions are. iTunes displays navigation buttons outside of the title bar ![iTunes navigation buttons](images/osx-itunes-navigation-buttons.png) while the App Store displays them inside the title bar. ![AppStore navigation buttons](images/osx-appstore-navigation-buttons.png) Both apps display navigation buttons even when there is no history (unlike Windows 10).
+- iOS: Don't display a user-agent back button. iOS applications are generally responsible for drawing their own navigation buttons. ![iOS iMessage navigation button](images/ios-imessage-navigation-buttons.jpg). On newer iPhones there are swipe gestures as an OS convention for going back. It is unclear whether the availability of these gestures should count as the presence of a back button.
 - Linux: Unclear what conventions are.
 - ChromeOS: Unclear what conventions are.
 
