@@ -55,7 +55,7 @@ The `navigation-controls` query should always be available, including when the a
 It is expected that for the majority of use cases, CSS detection should be sufficient. This has the added advantage that it will work even if JavaScript is not enabled on the page (though it is unlikely that much else in a modern web application will).
 
 ```css
-@media navigation-controls {
+@media (navigation-controls) {
     #back-button {
         display-none;
     }
