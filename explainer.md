@@ -62,7 +62,11 @@ It is expected that for the majority of use cases, CSS detection should be suffi
     }
 }
 
-/* Make the back button green if the browser is not showing any navigation controls. */
+/* 
+ * Make the back button green if the browser is not showing any navigation controls.
+ * Note: This will not match unless the user agent understands the media query, even
+ * if no controls are being shown.
+ */
 @media (navigation-controls: none) {
     #back-button {
         background: green;
