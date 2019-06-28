@@ -66,7 +66,7 @@ It is expected that for the majority of use cases, CSS detection should be suffi
 In more complicated scenarios, it might be useful to detect the presence of the back button in JavaScript. Fortunately there is already a mechanism for running media queries in JavaScript.
 
 ```js
-const backButtonQuery = window.matchMedia('navigation-controls');
+const backButtonQuery = window.matchMedia('(navigation-controls)');
 const backButton = window.getElementById('back-button');
 backButtonQuery.addEventListener('change', query => {    
     if (query.matches) {
