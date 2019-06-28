@@ -44,7 +44,7 @@ Advantages over user-agent detection
 
 A CSS Media query `navigation-controls` which determines what navigation controls are currently available, with the possible values `'none'` | `'back'`, and the possibility of being extended with `'back-and-forward'` in future. However, the API is designed to be used in a [boolean context](https://www.w3.org/TR/mediaqueries-4/#mq-boolean-context), so all future values should imply the presence of a back button (e.g. we wouldn't add a separate `'forward'` value).
 
-*Note: This value is an enum not a boolean because `<mq-boolean>` is intended for [legacy purposes only](https://www.w3.org/TR/mediaqueries-4/#grid), with the spec noting that "If this feature were being designed today, it would instead use proper named keywords for its values."*
+>Note: This value is an enum not a boolean because `<mq-boolean>` is intended for [legacy purposes only](https://www.w3.org/TR/mediaqueries-4/#grid), with the spec noting that "If this feature were being designed today, it would instead use proper named keywords for its values."*
 
 There is precedence for doing feature detection via a CSS media query in the Web App Manifest's [display mode](https://www.w3.org/TR/appmanifest/#the-display-mode-media-feature), which allows developers to determine how their app is being displayed.
 
@@ -55,9 +55,28 @@ The `navigation-controls` query should always be available, including when the a
 It is expected that for the majority of use cases, CSS detection should be sufficient. This has the added advantage that it will work even if JavaScript is not enabled on the page (though it is unlikely that much else in a modern web application will).
 
 ```css
+/* Hide the back button if the browser provides any navigation controls. */
 @media (navigation-controls) {
     #back-button {
-        display-none;
+        display: none;
+    }
+}
+
+/* Make the back button green if the browser is not showing any navigation controls. */
+@media (navigation-controls: none) {
+    #back-button {
+        background: green;
+    }
+}
+
+/*
+ * Make the back button red if the browser is showing one too.
+ * Note: If this query matches then @media (navigation-controls)
+ * will too.
+ */
+@media (navigation-controls: back) {
+    #back-button {
+        background: red;
     }
 }
 ```
